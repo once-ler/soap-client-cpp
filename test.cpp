@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
   
   //your context
   PlustacheTypes::ObjectType o;
-  o["temp"] = "89";
+  o["temp"] = "99";
 
   //create your client and pass your context
   auto client = Client(testHost, testUri);

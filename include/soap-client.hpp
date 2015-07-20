@@ -94,6 +94,7 @@ namespace SimpleSoap{
 https://akrzemi1.wordpress.com/examples/parsing-xml/
 // Copyright 2014 Andrzej Krzemienski.
 **/
+
 class DateTranslator {
   typedef boost::date_time::date_facet<Date, char> tOFacet;
   typedef boost::date_time::date_input_facet<Date, char> tIFacet;

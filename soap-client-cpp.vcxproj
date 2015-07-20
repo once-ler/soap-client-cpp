@@ -129,10 +129,10 @@ copy "$(ProjectDir)tpl\*" "$(TargetDir)tpl"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\test.cpp" />
+    <ClInclude Include="include\soap-client.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\soap-client.hpp" />
+    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,15 +20,13 @@ int main(int argc, char *argv[]) {
   client.compile(tplFile, o);
 
   //get the result
-  stringstream ss;
-  client.send(ss);  
-  cout << ss.str() << "\n";  
+  auto result = client.send();  
+  cout << "body" << *result->httpResponse << "\n";
+  cout << "status => " << *result->httpStatus << "\n";
 
-  //read xml response
-  ptree pt;
-  read_xml(ss, pt);
-
-  auto converted = pt.get<double>("soap:Envelope.soap:Body.FahrenheitToCelsiusResponse.FahrenheitToCelsiusResult");
+  //traverse xml
+  auto pt = result->xmlTree;
+  auto converted = pt->get<double>("soap:Envelope.soap:Body.FahrenheitToCelsiusResponse.FahrenheitToCelsiusResult");
 
   cout << std::setprecision(9) << converted << "\n";
 

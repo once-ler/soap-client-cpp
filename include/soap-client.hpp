@@ -22,6 +22,14 @@ typedef boost::gregorian::date Date;
 using namespace std;
 
 namespace SimpleSoap{
+
+  struct Result {
+    //shared_ptr<SimpleWeb::ClientBase<SimpleWeb::HTTP>::Response> httpResponse;
+    shared_ptr<string> httpResponse;
+    shared_ptr<string> httpStatus;
+    shared_ptr<boost::property_tree::ptree> xmlTree;
+  } SoapResult;
+
   class Client {
     string host;
     string querypath;
@@ -41,7 +49,7 @@ namespace SimpleSoap{
 
       return 0;
     }
-    stringstream& Client::send(stringstream& ss){
+    shared_ptr<Result> Client::send(){
       //send the compiled soap message to dest
       HttpClient client(host);
 
@@ -49,13 +57,32 @@ namespace SimpleSoap{
       std::map<string, string> header;
       header["Content-Type"] = "text/xml";
 
+      //post the request
       stringstream buf(xml);
-
       auto r2 = client.request("POST", querypath, buf, header);
 
+      //get the result
+      stringstream ss;
       ss << r2->content.rdbuf();
+      
+      //populate http response
+      shared_ptr<string> res(new string(ss.str()));
+      shared_ptr<string> sta(new string(r2->status_code));
 
-      return ss;
+      //convert the ostream to xml
+      shared_ptr<ptree> pt(new ptree());
+      read_xml(ss, *pt);
+
+      //prepare return result
+      shared_ptr<Result> result(new Result());
+      
+      r2->content.seekg(0, r2->content.beg);
+      //result->httpResponse = r2;
+      result->httpResponse = res;
+      result->httpStatus = sta;
+      result->xmlTree = pt;
+
+      return result;
     }
   private:
     

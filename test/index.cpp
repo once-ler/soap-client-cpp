@@ -1,11 +1,11 @@
 #include <iostream>
 #include "plustache/plustache_types.hpp"
-#include "soap-client.hpp"
+//#include "soap-client.hpp"
 
-using namespace SimpleSoap;
+//using namespace SimpleSoap;
 
-int main(int argc, char *argv[]) {
-
+int main2(int argc, char *argv[]) {
+  /**
   //indicate what service to invoke
   const string testHost = "www.w3schools.com";
   const string testUri = "/webservices/tempconvert.asmx";
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   auto converted = pt->get<double>("soap:Envelope.soap:Body.FahrenheitToCelsiusResponse.FahrenheitToCelsiusResult");
 
   cout << std::setprecision(9) << converted << "\n";
-
+**/
   return 0;
 
 }

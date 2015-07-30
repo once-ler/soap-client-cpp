@@ -43,6 +43,10 @@ namespace SimpleSoap{
       std::ifstream file(tplFile.c_str());
       std::string tpl((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
+      if (tpl.size() == 0){
+        return 1;
+      }
+
       //compile tempplate with context to create a soap message
       Plustache::template_t t;
       xml = t.render(tpl, o);

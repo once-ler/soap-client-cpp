@@ -19,8 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bcp.cpp" />
     <ClCompile Include="index.cpp" />
     <ClCompile Include="test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="test-bcp.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5D6D4565-B6DD-4457-8ED7-36CAACACDD37}</ProjectGuid>
@@ -85,12 +89,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\cygwin64\home\htao\soap-client-cpp\include;C:\cygwin64\home\htao\plustache\include;C:\local\boost_1_57_0;C:\cygwin64\home\htao\Simple-Web-Server;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\cygwin64\home\htao\soap-client-cpp\include;C:\cygwin64\home\htao\plustache\include;C:\local\boost_1_57_0;C:\cygwin64\home\htao\Simple-Web-Server;C:\cygwin64\home\htao\freetds\include;C:\cygwin64\home\htao\freetds\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\cygwin64\home\htao\soap-client-cpp\dist\Debug;C:\local\boost_1_57_0\lib64-msvc-12.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>soap-client-cpp.lib;plustache.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\cygwin64\home\htao\soap-client-cpp\dist\Debug;C:\local\boost_1_57_0\lib64-msvc-12.0;C:\cygwin64\home\htao\freetds\build\src\dblib\Debug;C:\cygwin64\home\htao\freetds\build\src\tds\Debug;C:\cygwin64\home\htao\freetds\build\src\replacements\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>soap-client-cpp.lib;plustache.lib;db-lib.lib;tds.lib;replacements.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>mkdir "$(TargetDir)tpl"
@@ -118,14 +123,15 @@ copy "$(ProjectDir)..\tpl\*" "$(TargetDir)tpl"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\cygwin64\home\htao\soap-client-cpp\include;C:\cygwin64\home\htao\plustache\include;C:\local\boost_1_57_0;C:\cygwin64\home\htao\Simple-Web-Server;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\cygwin64\home\htao\soap-client-cpp\include;C:\cygwin64\home\htao\plustache\include;C:\local\boost_1_57_0;C:\cygwin64\home\htao\Simple-Web-Server;C:\cygwin64\home\htao\freetds\include;C:\cygwin64\home\htao\freetds\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\cygwin64\home\htao\soap-client-cpp\dist\Debug;C:\local\boost_1_57_0\lib64-msvc-12.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>soap-client-cpp.lib;plustache.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>soap-client-cpp.lib;plustache.lib;db-lib.lib;tds.lib;replacements.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>mkdir "$(TargetDir)tpl"

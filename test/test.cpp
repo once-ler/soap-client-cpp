@@ -75,7 +75,7 @@ namespace allentown{
 
 };
 
-int main(int argc, char *argv[]) {
+int main3(int argc, char *argv[]) {
 
   allentown::Client<allentown::GetCsv> client("01/01/2015","07/01/2015");
 

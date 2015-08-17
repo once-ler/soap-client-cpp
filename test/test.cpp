@@ -18,7 +18,7 @@ namespace allentown{
     public: 
       Base(){}
       ~Base(){}
-      string host = "localhost";
+      string host = "clcwcdcdvm009";
       string uri = "/EAM.Outbound.Webservices/OutboundService.asmx";
       string tpl;
       

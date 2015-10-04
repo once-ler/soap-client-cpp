@@ -41,7 +41,8 @@ namespace SimpleSoap{
   public:
     Client(string _host, string _querypath) : host(_host), querypath(_querypath){}
     ~Client(){}
-    int Client::compile(const string tplFile, const PlustacheTypes::ObjectType& o){
+    template<class T>
+    int compile(const string tplFile, const T& o){
 
       //read entire template file 
       std::ifstream file(tplFile.c_str());
@@ -57,6 +58,7 @@ namespace SimpleSoap{
 
       return 0;
     }
+
     shared_ptr<Result> Client::send(){
       //send the compiled soap message to dest
       HttpClient client(host);
@@ -101,6 +103,7 @@ namespace SimpleSoap{
   private:
     
   };
+
 }
 
 /**

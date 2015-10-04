@@ -1,3 +1,7 @@
+#ifndef SOAP_CLIENT_HPP
+#define SOAP_CLIENT_HPP
+
+#include <iostream>
 #include <locale>
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -75,7 +79,13 @@ namespace SimpleSoap{
 
       //convert the ostream to xml
       shared_ptr<ptree> pt(new ptree());
-      read_xml(ss, *pt);
+      try {
+        read_xml(ss, *pt);
+      }
+      catch(exception& e){
+        cout << e.what() << endl;
+        cout << ss.str() << endl;
+      }
 
       //prepare return result
       shared_ptr<Result> result(new Result());
@@ -136,3 +146,5 @@ public:
     return ans.str();
   }
 };
+
+#endif

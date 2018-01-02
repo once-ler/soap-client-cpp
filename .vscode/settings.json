@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.plsql": "plsql",
+    "*.sql": "sql",
+    "list": "cpp"
+  }
+}

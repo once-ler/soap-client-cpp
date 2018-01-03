@@ -6,7 +6,7 @@
 // #include <boost/optional.hpp>
 // #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "api/api-client.hpp"
+// #include "api/api-client.hpp"
 #include "plustache/include/plustache.hxx"
 
 // #include "plustache/template.hpp"
@@ -129,7 +129,7 @@ namespace SimpleSoap {
   public:
     shared_ptr<string> render(shared_ptr<Plustache::Context> ctx, const string _path, const string _rootPath) {
       string tplPath(_path);
-      durian::generator<durian::XmlElement::Body> gen;
+      SimpleSoap::generator<SimpleSoap::XmlElement::Body> gen;
       auto body = gen.compile(ctx, tplPath);
 
       // create envelope wrapper
@@ -137,68 +137,17 @@ namespace SimpleSoap {
       (*rootCtx)["body"] = *body;
       
       string rootPath(_rootPath);
-      durian::generator<durian::XmlElement::Root> rootGen;
+      SimpleSoap::generator<SimpleSoap::XmlElement::Root> rootGen;
       auto message = rootGen.compile(rootCtx, rootPath);
 
       return message;
     }
   };
 
-  /*
-    client implenmentation
-    LOB client modules should derive from this base class
-  */
-  template<typename socketType>
-  class client {
-  public:
-    client<socketType>(const string& _host,
-      const string& _servicePath,
-      const string& _user = "",
-      const string& _password = "",
-      std::map<string, string>& _customHeaders = {}
-      ) : 
-        host(_host),
-        servicePath(_servicePath), 
-        userstr(_user), 
-        passwordstr(_password), 
-        customHeaders(_customHeaders)
-      {
-
-      // create api::client<socketType>
-      apiClient = make_unique<api::client<socketType>>(host);
-
-      // create the context that will be shared by all templates
-      ctx = make_shared<Plustache::Context>();
-
-      // store user & password in the context
-      (*ctx).add("user", userstr);
-      (*ctx).add("password", passwordstr);
-      (*ctx).add("host", host);
-      (*ctx).add("servicePath", servicePath);
-      (*ctx).add("customHeaders", customHeaders);
-
-      //store the template type in the context
-      (*ctx).add("socketType", (std::is_same<socketType, SimpleWeb::HTTP>::value ? "HTTP" : "HTTPS"));
-    }
-    ~client<socketType>(){}
-    client() = default;
-    
-    shared_ptr<Plustache::Context> getContext() {
-      return this->ctx;
-    }
-
-  protected:
-    shared_ptr<Plustache::Context> ctx;
-    SimpleSoap::generator<XmlElement::Message> generator;
-    unique_ptr<api::client<socketType>> apiClient;
-    // PlustacheTypes::ObjectType user, password, token, response;
-    std::map<string, string> customHeaders;
-    string host, servicePath, userstr, passwordstr;    
-  };
-
   /***************
    * Old version.
    ****************/
+  /*
   struct Result {
     //shared_ptr<SimpleWeb::ClientBase<SimpleWeb::HTTP>::Response> httpResponse;
     shared_ptr<string> httpResponse;
@@ -275,51 +224,7 @@ namespace SimpleSoap {
   private:
     
   };
-
+  */
 }
-
-/**
-@reference
-https://akrzemi1.wordpress.com/examples/parsing-xml/
-// Copyright 2014 Andrzej Krzemienski.
-**/
-
-class DateTranslator {
-  typedef boost::date_time::date_facet<Date, char> tOFacet;
-  typedef boost::date_time::date_input_facet<Date, char> tIFacet;
-  std::locale locale_;
-
-  static std::locale isoDateLocale() {
-    std::locale loc;
-    loc = std::locale(loc, new tIFacet("%Y-%m-%d"));
-    loc = std::locale(loc, new tOFacet("%Y-%m-%d"));
-    return loc;
-  }
-
-public:
-  typedef std::string internal_type;
-  typedef Date external_type;
-
-  DateTranslator() : locale_(isoDateLocale()) {}
-
-  boost::optional<external_type> get_value(internal_type const& v) {
-    std::istringstream stream(v);
-    stream.imbue(locale_);
-    external_type vAns;
-    if (stream >> vAns) {
-      return vAns;
-    }
-    else {
-      return boost::none;
-    }
-  }
-
-  boost::optional<internal_type> put_value(external_type const& v) {
-    std::ostringstream ans;
-    ans.imbue(locale_);
-    ans << v;
-    return ans.str();
-  }
-};
 
 #endif

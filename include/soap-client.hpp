@@ -78,7 +78,7 @@ namespace SimpleSoap {
     Body
   */
   template<>
-  class generator_impl<XmlElement::Body> : public base<XmlElement::Body>{
+  class generator_impl<XmlElement::Body> : public base<XmlElement::Body> {
   public:
     generator_impl(){ tpl = "tpl/body"; }
 
@@ -95,14 +95,11 @@ namespace SimpleSoap {
   class generator<XmlElement::Root>{
   public:
     
-    std::shared_ptr<std::string> compile(shared_ptr<PlustacheTypes::ObjectType> ctx, std::string& tplPath) {
-
+    std::string compile(shared_ptr<PlustacheTypes::ObjectType> ctx, std::string& tplPath) {
       generator_impl<XmlElement::Root> elemGen;
       elemGen.tpl = tplPath;
-      auto genTpl = elemGen.compile(ctx);
-      auto r = make_shared<string>(genTpl);
-
-      return r;
+      auto genTpl = elemGen.compile(ctx);      
+      return move(genTpl);
     }
 
   };
@@ -127,7 +124,7 @@ namespace SimpleSoap {
   class generator<XmlElement::Message> {
 
   public:
-    shared_ptr<string> render(shared_ptr<Plustache::Context> ctx, const string _path, const string _rootPath) {
+    string render(shared_ptr<Plustache::Context> ctx, const string _path, const string _rootPath) {
       string tplPath(_path);
       SimpleSoap::generator<SimpleSoap::XmlElement::Body> gen;
       auto body = gen.compile(ctx, tplPath);
@@ -140,7 +137,7 @@ namespace SimpleSoap {
       SimpleSoap::generator<SimpleSoap::XmlElement::Root> rootGen;
       auto message = rootGen.compile(rootCtx, rootPath);
 
-      return message;
+      return move(message);
     }
   };
 

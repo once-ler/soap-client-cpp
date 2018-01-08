@@ -3,13 +3,13 @@
 #include <map>
 #include <memory>
 #include "soap-client.hpp"
-#include "api/api-client.hpp"
+#include "web/web-client.hpp"
 
 using namespace std;
 using namespace SimpleSoap;
 
 namespace SimpleSoap::api {
-  static string version = "0.2.0";
+  static string version = "0.3.0";
   /*
     client implenmentation
     LOB client modules should derive from this base class
@@ -19,19 +19,19 @@ namespace SimpleSoap::api {
   public:
     client<socketType>(const string& _host,
       const string& _servicePath,
+      const std::map<string, string>& _customHeaders = {{"Content-Type", "text/xml"}},
       const string& _user = "",
-      const string& _password = "",
-      std::map<string, string>& _customHeaders = {}
+      const string& _password = ""      
       ) : 
         host(_host),
-        servicePath(_servicePath), 
+        servicePath(_servicePath),
+        customHeaders(_customHeaders),
         userstr(_user), 
-        passwordstr(_password), 
-        customHeaders(_customHeaders)
+        passwordstr(_password)        
       {
 
       // create api::client<socketType>
-      apiClient = make_unique<api::client<socketType>>(host);
+      webClient = make_unique<web::client<socketType>>(host);
 
       // create the context that will be shared by all templates
       ctx = make_shared<Plustache::Context>();
@@ -53,10 +53,27 @@ namespace SimpleSoap::api {
       return this->ctx;
     }
 
+    auto compile(const string& bodyTpl, const string& rootTpl) {
+      auto compiledTemplate = this->generator.render(this->ctx, bodyTpl, rootTpl);
+      return move(compiledTemplate);
+    }
+
+    auto post(const string& compiledTemplate) {
+      auto future = this->webClient->methodPromise["POST"];
+      auto pms = future(servicePath, compiledTemplate, customHeaders);
+      return pms.get();
+    }
+
+    auto get() {
+      auto future = this->webClient->methodPromise["GET"];
+      auto pms = future(servicePath, "", customHeaders);
+      return pms.get();
+    }
+
   protected:
     shared_ptr<Plustache::Context> ctx;
     SimpleSoap::generator<XmlElement::Message> generator;
-    unique_ptr<api::client<socketType>> apiClient;
+    unique_ptr<web::client<socketType>> webClient;
     std::map<string, string> customHeaders;
     string host, servicePath, userstr, passwordstr;    
   };

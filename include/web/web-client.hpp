@@ -34,18 +34,29 @@ namespace web {
   template<typename T>
   class client {    
   public:
-    client(string _host, bool _plain_response = true) : host(_host), plain_response(_plain_response) {
+    client(const string& _host, bool _plain_response = true) : host(_host), plain_response(_plain_response) {
 
       // for each http/s verb, create a method factory that returns a future
       std::for_each(methods.begin(), methods.end(), [this](const string verb)->void{
 
         // promise pattern
-        this->methodPromise[verb] = [verb, this](const string& params, const string& data, std::map<string, string>& header, bool plain_response)->boost::future<std::string> {
+        this->methodPromise[verb] = [verb, this](
+          const string& params,
+          const string& data,
+          const std::map<string, string>& header,
+          bool plain_response
+        )->boost::future<std::string> {
           /*
             implementation of generic REST client
           */
-          auto apiCall = [this](const string host, const string verb, string& params, string& data, std::map<string, string>& header, bool plain_response)->string {
-            Json::object j;
+          auto apiCall = [this](
+            const string& host,
+            const string& verb,
+            const string& params,
+            const string& data,
+            const std::map<string, string>& header,
+            bool plain_response
+          )->string {
             SimpleWeb::CaseInsensitiveMultimap mm;
             
             for_each(header.begin(), header.end(), [&mm](auto& e) { mm.insert(move(e)); });
@@ -68,19 +79,21 @@ namespace web {
               oss << r1->content.rdbuf();
               resp = oss.str();
 
-              if (plain_response)
+              // if (plain_response)
                 return resp;
 
-              j["request"] = data;
-              j["statusCode"] = r1->status_code;
-              j["response"] = resp;
+              // j["request"] = data;
+              // j["statusCode"] = r1->status_code;
+              // j["response"] = resp;
             } catch(const SimpleWeb::system_error& e) {
-              j["response"] = e.what();
+              // j["response"] = e.what();
             } catch (const std::exception& e) {
-              j["response"] = e.what();
+              // j["response"] = e.what();
             }
-            Json js = j;
-            return js.dump();
+
+            return ""; 
+            // Json js = j;
+            // return js.dump();
           };
 
           return boost::async([&, this]()->string{
@@ -96,7 +109,7 @@ namespace web {
     /*
     map of <key, fn(string, string) => future<string>>
     */
-    std::unordered_map <string, std::function<boost::future<std::string>(const string&, const string&, std::map<string, string>&)>> methodPromise;
+    std::unordered_map <string, std::function<boost::future<std::string>(const string&, const string&, const std::map<string, string>&, bool)>> methodPromise;
   private:
     string host;
     bool plain_response;   

@@ -15,14 +15,14 @@ int main(int argc, char *argv[]) {
   o["temp"] = "99";
 
   // Create your client and pass your context
-  SimpleSoapClientApi client(testHost, testUri);  
+  SimpleSoapClientApi soapclient(testHost, testUri);  
 
   // Pass the context.
-  client.getContext()->add("temp", "99");
+  soapclient.getContext()->add("temp", "99");
 
-  auto requestBody = client.compile(bodyTpl, rootTpl);
+  auto requestBody = soapclient.compile(bodyTpl, rootTpl);
 
-  auto result = client.post(requestBody);
+  auto result = soapclient.post(requestBody);
 
   cout << result << endl;
 

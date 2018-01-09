@@ -9,7 +9,7 @@ using namespace std;
 using namespace SimpleSoap;
 
 namespace SimpleSoap::api {
-  static string version = "0.4.0";
+  static string version = "0.5.0";
   /*
     client implenmentation
     LOB client modules should derive from this base class
@@ -60,13 +60,13 @@ namespace SimpleSoap::api {
 
     auto post(const string& compiledTemplate) {
       auto future = this->webClient->methodPromise["POST"];
-      auto pms = future(servicePath, compiledTemplate, customHeaders, true);
+      auto pms = future(servicePath, compiledTemplate, customHeaders);
       return pms.get();
     }
 
     auto get() {
       auto future = this->webClient->methodPromise["GET"];
-      auto pms = future(servicePath, "", customHeaders, true);
+      auto pms = future(servicePath, "", customHeaders);
       return pms.get();
     }
 

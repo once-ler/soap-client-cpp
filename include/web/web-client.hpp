@@ -23,10 +23,8 @@
 #include <unordered_map>
 #include <functional>
 #include <map>
-#include "json11/json11.hpp"
 
 using namespace std;
-using namespace json11;
 
 static const std::list<string> methods{ "GET", "POST", "PUT", "PATCH", "DEL" };
 
@@ -34,18 +32,17 @@ namespace web {
   template<typename T>
   class client {    
   public:
-    client(const string& _host, bool _plain_response = true) : host(_host), plain_response(_plain_response) {
-
+    using HTTP_Response = shared_ptr<typename SimpleWeb::ClientBase<T>::Response>;
+      
+    client(const string& _host) : host(_host) {
       // for each http/s verb, create a method factory that returns a future
-      std::for_each(methods.begin(), methods.end(), [this](const string verb)->void{
-
+      std::for_each(methods.begin(), methods.end(), [this](const string verb)->void {
         // promise pattern
         this->methodPromise[verb] = [verb, this](
           const string& params,
           const string& data,
-          const std::map<string, string>& header,
-          bool plain_response
-        )->boost::future<std::string> {
+          const std::map<string, string>& header
+        )->boost::future<HTTP_Response> {
           /*
             implementation of generic REST client
           */
@@ -54,64 +51,44 @@ namespace web {
             const string& verb,
             const string& params,
             const string& data,
-            const std::map<string, string>& header,
-            bool plain_response
-          )->string {
+            const std::map<string, string>& header
+          )->HTTP_Response {
             SimpleWeb::CaseInsensitiveMultimap mm;
             
             for_each(header.begin(), header.end(), [&mm](auto& e) { mm.insert(move(e)); });
             
-            try {
-              SimpleWeb::Client<T> client(host);
-              
-              shared_ptr<typename SimpleWeb::ClientBase<T>::Response> r1;
-              string resp;
+            HTTP_Response r1; // = make_shared<typename SimpleWeb::ClientBase<T>::Response>();
 
-              if (data.size() > 0){
+            try {
+              SimpleWeb::Client<T> client(host);              
+              
+              if (data.size() > 0) {
                 stringstream ss;
                 ss << data;
                 r1 = client.request(verb, params, ss, mm);
               } else {
                 r1 = client.request(verb, params, "", mm);
               }
-              
-              ostringstream oss;
-              oss << r1->content.rdbuf();
-              resp = oss.str();
-
-              // if (plain_response)
-                return resp;
-
-              // j["request"] = data;
-              // j["statusCode"] = r1->status_code;
-              // j["response"] = resp;
-            } catch(const SimpleWeb::system_error& e) {
-              // j["response"] = e.what();
-            } catch (const std::exception& e) {
-              // j["response"] = e.what();
+            } catch (const SimpleWeb::system_error& e) {
+            } catch (const std::exception& e) {              
             }
 
-            return ""; 
-            // Json js = j;
-            // return js.dump();
+            return r1;
           };
 
-          return boost::async([&, this]()->string{
-            return apiCall(host, verb, params, data, header, plain_response);
+          return boost::async([&, this]()->shared_ptr<typename SimpleWeb::ClientBase<T>::Response> {
+            return apiCall(host, verb, params, data, header);
           });
 
         };
         
       }); // le fin for_each
     }
-    // client(){};
-    ~client(){}
     /*
-    map of <key, fn(string, string) => future<string>>
+    map of <key, fn(string, string, map<string,string>) => future<HTTP_Response>>
     */
-    std::unordered_map <string, std::function<boost::future<std::string>(const string&, const string&, const std::map<string, string>&, bool)>> methodPromise;
+    std::unordered_map <string, std::function<boost::future<HTTP_Response>(const string&, const string&, const std::map<string, string>&)>> methodPromise;
   private:
     string host;
-    bool plain_response;   
   };
 }

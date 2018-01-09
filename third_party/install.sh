@@ -8,9 +8,6 @@ git clone https://github.com/mrtazz/plustache.git && ./generator-plustache-hxx.s
 # Download Simple-Web-Server
 git clone https://github.com/eidheim/Simple-Web-Server.git
 
-# Download json11
-git clone https://github.com/dropbox/json11.git
-
 # Download and install asio
 # git clone https://github.com/chriskohlhoff/asio.git && cd asio/asio && ./autogen.sh
 

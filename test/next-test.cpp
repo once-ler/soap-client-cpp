@@ -1,6 +1,6 @@
 #include "soap-client-api.hpp"
 
-using SimpleSoapClientApi = SimpleSoap::api::client<SimpleWeb::HTTP>;
+using SimpleSoapClientApi = SimpleSoap::api::client<SimpleWeb::HTTPS>;
 
 int main(int argc, char *argv[]) {
   //indicate what service to invoke
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 
   auto result = soapclient.post(requestBody);
 
-  cout << result << endl;
+  cout << result->content.string() << endl;
 
   // ------------------------------------------------------------------------
 /*

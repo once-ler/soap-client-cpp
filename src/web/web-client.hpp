@@ -22,16 +22,13 @@ namespace web {
     using HTTP_Response = shared_ptr<typename SimpleWeb::ClientBase<T>::Response>;
       
     client(const string& _host) : host(_host) {
-      // for each http/s verb, create a method factory that returns a future
       for_each(methods.begin(), methods.end(), [this](const string verb)->void {
         this->method[verb] = [verb, this](
           const string& params,
           const string& data,
           const map<string, string>& header
         )->HTTP_Response {
-          /*
-            implementation of generic REST client
-          */
+          
           auto apiCall = [this](
             const string& host,
             const string& verb,

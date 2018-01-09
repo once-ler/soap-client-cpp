@@ -10,5 +10,4 @@ x64
 **/dist/
 **/plustache
 **/Simple-Web-Server
-**/asio
-**/json11
+**/testing

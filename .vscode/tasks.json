@@ -11,7 +11,7 @@
             "args": ["-std=c++14", "-g", "-Wall", "-fno-stack-protector",
                 "-I", "include",
                 "-I", "/usr/local/include",
-                "-I", "${workspaceRoot}/include",
+                "-I", "${workspaceRoot}/src",
                 "-I", "${workspaceRoot}/third_party",
                 "-L", "/usr/local/lib",
                 "-L", "/usr/lib/x86_64-linux-gnu",

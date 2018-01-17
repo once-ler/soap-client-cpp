@@ -13,21 +13,28 @@
 
 using namespace std;
 
-static const list<string> methods{ "GET", "POST", "PUT", "PATCH", "DEL" };
-
 namespace web {
+  static const list<string> methods{ "GET", "POST", "PUT", "PATCH", "DEL" };
+
+  template<typename T>
+  struct web_response {
+    shared_ptr<typename SimpleWeb::ClientBase<T>::Response> response;
+    shared_ptr<SimpleWeb::system_error> error;
+  };
+
   template<typename T>
   class client {    
   public:
-    using HTTP_Response = shared_ptr<typename SimpleWeb::ClientBase<T>::Response>;
-      
+    using HTTP_Response_ = shared_ptr<typename SimpleWeb::ClientBase<T>::Response>;
+    using HTTP_Error_ = shared_ptr<SimpleWeb::system_error>;
+
     client(const string& _host) : host(_host) {
-      for_each(methods.begin(), methods.end(), [this](const string verb)->void {
+      for_each(methods.begin(), methods.end(), [this](const string& verb) {
         this->method[verb] = [verb, this](
           const string& params,
           const string& data,
           const map<string, string>& header
-        )->HTTP_Response {
+        )->web_response<T> {
           
           auto apiCall = [this](
             const string& host,
@@ -35,12 +42,13 @@ namespace web {
             const string& params,
             const string& data,
             const map<string, string>& header
-          )->HTTP_Response {
+          )->web_response<T> {
             SimpleWeb::CaseInsensitiveMultimap mm;
             
             for_each(header.begin(), header.end(), [&mm](auto& e) { mm.insert(move(e)); });
             
-            HTTP_Response r1;
+            HTTP_Response_ r1;
+            HTTP_Error_ e1;
             
             try {
               SimpleWeb::Client<T> client(host);              
@@ -53,10 +61,10 @@ namespace web {
                 r1 = client.request(verb, params, "", mm);
               }
             } catch (const SimpleWeb::system_error& e) {
-            } catch (const exception& e) {              
+              e1 = make_shared<SimpleWeb::system_error>(e);              
             }
 
-            return r1;
+            return web_response<T>{ r1, e1 };
           };
 
           return apiCall(host, verb, params, data, header);
@@ -66,9 +74,9 @@ namespace web {
       }); // le fin for_each
     }
     /*
-    map of <key, fn(string, string, map<string,string>) => HTTP_Response>
+    map of <key, fn(string, string, map<string,string>) => http_response>
     */
-    unordered_map <string, function<HTTP_Response(const string&, const string&, const map<string, string>&)>> method;
+    unordered_map <string, function<web_response<T>(const string&, const string&, const map<string, string>&)>> method;
   private:
     string host;
   };

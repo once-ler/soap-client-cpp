@@ -88,14 +88,11 @@ namespace SimpleSoap {
   class generator<XmlElement::Body>{
   public:
 
-    std::shared_ptr<std::string> compile(shared_ptr<Plustache::Context> ctx, std::string& tplPath) {
-
+    std::string compile(shared_ptr<Plustache::Context> ctx, std::string& tplPath) {
       generator_impl<XmlElement::Body> elemGen;
       elemGen.tpl = tplPath;
       auto genTpl = elemGen.compile(ctx);
-      auto r = make_shared<string>(genTpl);
-
-      return r;
+      return move(genTpl);
     }    
 
   };
@@ -111,7 +108,7 @@ namespace SimpleSoap {
 
       // create envelope wrapper
       auto rootCtx = make_shared<PlustacheTypes::ObjectType>();
-      (*rootCtx)["body"] = *body;
+      (*rootCtx)["body"] = body;
       
       string rootPath(_rootPath);
       SimpleSoap::generator<SimpleSoap::XmlElement::Root> rootGen;

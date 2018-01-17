@@ -23,9 +23,13 @@ int main(int argc, char *argv[]) {
   auto requestBody = soapclient.compile(bodyTpl, rootTpl);
 
   auto result = soapclient.post(requestBody);
-
-  if (result)
-    cout << result->content.string() << endl;
+  
+  if (result.response) {
+    ofstream os("test.xml");
+    os << result.response->content.string();
+    os.close();
+    // cout << result.response->content.string() << endl;
+  }
 
   return 0;
 }
